@@ -1,5 +1,8 @@
 import 'package:firebase/ui/auth/signup_screen.dart';
+import 'package:firebase/ui/posts/posts_screen.dart';
+import 'package:firebase/utils/utilitis.dart';
 import 'package:firebase/widgets/round_buttons.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -11,9 +14,11 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  bool loading = false;
   final _formkey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final _auth = FirebaseAuth.instance;
 
   @override
   void dispose() {
@@ -21,7 +26,23 @@ class _LoginScreenState extends State<LoginScreen> {
     emailController.dispose();
     passwordController.dispose();
   }
-
+void login(){
+    setState(() {
+      loading = true;
+    });
+    _auth.signInWithEmailAndPassword(email: emailController.text.toString(), password: passwordController.text.toString()).then((value){
+      Utils().toastMsg(value.user!.email.toString());
+      Navigator.push(context, MaterialPageRoute(builder: (context)=> PostsScreen()));
+      setState(() {
+        loading = false;
+      });
+    }).onError((error, stackTrace) {
+      Utils().toastMsg(error.toString());
+      setState(() {
+        loading = false;
+      });
+    });
+}
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -63,9 +84,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       controller: passwordController,
                       obscureText: true,
                       decoration: const InputDecoration(
-                        hintText: 'Password',
-                        prefixIcon: Icon(Icons.password_outlined),
-                      ),
+                          hintText: 'Password',
+                          prefixIcon: Icon(Icons.lock_open_outlined)),
                       validator: (value) {
                         if (value!.isEmpty) {
                           return 'Enter Password';
@@ -83,8 +103,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: RoundButton(
                   title: 'login',
+                  loading: loading,
                   onTap: () {
-                    if (_formkey.currentState!.validate()) {}
+                    if (_formkey.currentState!.validate()) {
+                      login();
+                    }
                   },
                 ),
               ),

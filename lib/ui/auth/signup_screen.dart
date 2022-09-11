@@ -87,6 +87,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     setState(() {
                       loading = true;
                     });
+                    // Fire base Auth 
                     _auth
                         .createUserWithEmailAndPassword(
                             email: emailController.text.toString(),
