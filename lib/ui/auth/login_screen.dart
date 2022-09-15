@@ -1,3 +1,4 @@
+import 'package:firebase/ui/auth/login_with_phone_number.dart';
 import 'package:firebase/ui/auth/signup_screen.dart';
 import 'package:firebase/ui/posts/posts_screen.dart';
 import 'package:firebase/utils/utilitis.dart';
@@ -26,13 +27,19 @@ class _LoginScreenState extends State<LoginScreen> {
     emailController.dispose();
     passwordController.dispose();
   }
-void login(){
+
+  void login() {
     setState(() {
       loading = true;
     });
-    _auth.signInWithEmailAndPassword(email: emailController.text.toString(), password: passwordController.text.toString()).then((value){
+    _auth
+        .signInWithEmailAndPassword(
+            email: emailController.text.toString(),
+            password: passwordController.text.toString())
+        .then((value) {
       Utils().toastMsg(value.user!.email.toString());
-      Navigator.push(context, MaterialPageRoute(builder: (context)=> PostsScreen()));
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => PostsScreen()));
       setState(() {
         loading = false;
       });
@@ -42,7 +49,8 @@ void login(){
         loading = false;
       });
     });
-}
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -118,7 +126,7 @@ void login(){
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('Dont have an account ?'),
+                const Text('Dont have an account ?'),
                 TextButton(
                   onPressed: () {
                     Navigator.push(
@@ -126,9 +134,36 @@ void login(){
                       MaterialPageRoute(builder: (context) => SignUpScreen()),
                     );
                   },
-                  child: Text('Sign up'),
+                  child: const Text('Sign up'),
                 ),
               ],
+            ),
+            const SizedBox(
+              height: 30,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => LoginWithPhoneNumber(),
+                    ),
+                  );
+                },
+                child: Container(
+                  height: 50,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(50),
+                    border: Border.all(
+                      color: Colors.black,
+                    ),
+                  ),
+                  child:
+                      const Center(child: Text('Login in with Phone number')),
+                ),
+              ),
             ),
           ],
         ),
